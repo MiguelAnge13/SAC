@@ -21,3 +21,13 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 Route::get('/usuarios', [App\Http\Controllers\UserController::class, 'index'])
     ->middleware('auth')
     ->name('usuarios.index');
+
+use App\Http\Controllers\CodigoController;
+
+Route::middleware('auth')->group(function () {
+    Route::get('/codigos', [CodigoController::class, 'index'])->name('codigos.index');
+    Route::post('/codigos', [CodigoController::class, 'store'])->name('codigos.store');
+    Route::get('/codigos/{id}', [CodigoController::class, 'show'])->name('codigos.show'); // devuelve JSON
+    Route::put('/codigos/{id}', [CodigoController::class, 'update'])->name('codigos.update');
+    Route::delete('/codigos/{id}', [CodigoController::class, 'destroy'])->name('codigos.destroy');
+});

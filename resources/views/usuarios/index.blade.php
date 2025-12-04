@@ -56,12 +56,12 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 menu-options">
                     <!-- Menu de opciones -->
                     <li class="nav-item"><a class="nav-link" href="#">Inicio</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Usuarios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/usuarios">Usuarios</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Proyectos</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Librerias</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Microcontroladores</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Calibracion</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Codigos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/codigos">Codigos</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Historial</a></li>
                 </ul>
 

@@ -57,7 +57,7 @@
                     <!-- Menu de opciones -->
                     <li class="nav-item"><a class="nav-link" href="#">Inicio</a></li>
                     <li class="nav-item"><a class="nav-link" href="/usuarios">Usuarios</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Proyectos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/proyectos">Proyectos</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Librerias</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Microcontroladores</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Calibracion</a></li>

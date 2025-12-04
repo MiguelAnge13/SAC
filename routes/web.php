@@ -31,3 +31,14 @@ Route::middleware('auth')->group(function () {
     Route::put('/codigos/{id}', [CodigoController::class, 'update'])->name('codigos.update');
     Route::delete('/codigos/{id}', [CodigoController::class, 'destroy'])->name('codigos.destroy');
 });
+
+use App\Http\Controllers\ProyectoController;
+
+Route::middleware('auth')->group(function () {
+    Route::get('/proyectos', [ProyectoController::class, 'index'])->name('proyectos.index');
+    Route::post('/proyectos', [ProyectoController::class, 'store'])->name('proyectos.store');
+    Route::get('/proyectos/{id}', [ProyectoController::class, 'show'])->name('proyectos.show'); // JSON
+    Route::put('/proyectos/{id}', [ProyectoController::class, 'update'])->name('proyectos.update');
+    Route::delete('/proyectos/{id}', [ProyectoController::class, 'destroy'])->name('proyectos.destroy');
+    Route::get('/proyectos/{id}/pdf', [ProyectoController::class, 'descargarPdf'])->name('proyectos.pdf');
+});

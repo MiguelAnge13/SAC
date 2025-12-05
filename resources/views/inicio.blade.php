@@ -60,7 +60,7 @@
   <nav class="navbar navbar-expand-lg" style="background:#0d6efd;">
     <div class="container">
       <a class="navbar-brand text-white" href="#">
-        <img src="{{ asset('logo.png') }}" alt="Logo" style="height:32px; margin-right:8px;"> SAC
+        <img src="{{ asset('img/roboticaCir.png') }}" alt="Logo" style="height:80px; margin-right:8px;">
       </a>
 
       <div class="collapse navbar-collapse justify-content-end">
@@ -70,10 +70,10 @@
                     <li class="nav-item"><a class="nav-link" href="/usuarios">Usuarios</a></li>
                     <li class="nav-item"><a class="nav-link" href="/proyectos">Proyectos</a></li>
                     <li class="nav-item"><a class="nav-link" href="/librerias">Librerias</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Microcontroladores</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/microcontroladores">Microcontroladores</a></li>
                     <li class="nav-item"><a class="nav-link" href="/calibracion">Calibracion</a></li>
                     <li class="nav-item"><a class="nav-link" href="/codigos">Codigos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Historial</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/historial">Historial</a></li>
                 </ul>
         <div class="ms-3 d-flex align-items-center">
           <span class="text-white me-2">Hola, {{ auth()->user()->nombre }}</span>

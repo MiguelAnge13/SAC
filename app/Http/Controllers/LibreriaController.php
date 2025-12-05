@@ -17,12 +17,22 @@ class LibreriaController extends Controller
     }
 
     // mostrar vista
-    public function index()
-    {
-        // Traer todas las librerías (puedes paginar si quieres)
-        $librerias = Libreria::orderBy('nombre')->get();
-        return view('librerias.index', compact('librerias'));
-    }
+    public function index(Request $request)
+{
+    $q = $request->query('q');
+
+    $librerias = Libreria::when($q, function ($builder, $qVal) {
+        $builder->where(function($b) use ($qVal) {
+            $b->where('nombre', 'like', '%' . $qVal . '%')
+              ->orWhere('lenguaje', 'like', '%' . $qVal . '%')
+              ->orWhere('version', 'like', '%' . $qVal . '%')
+              ->orWhere('descripcion', 'like', '%' . $qVal . '%');
+        });
+    })->orderBy('nombre')->get();
+
+    return view('librerias.index', compact('librerias'));
+}
+
 
     // crear nueva librería
     public function store(Request $request)
@@ -104,24 +114,39 @@ class LibreriaController extends Controller
 
     // Export CSV (descarga)
     public function exportCsv()
-    {
-        $response = new StreamedResponse(function () {
-            $handle = fopen('php://output', 'w');
-            // cabecera CSV
-            fputcsv($handle, ['nombre','lenguaje','version','descripcion']);
-            Libreria::orderBy('nombre')->chunk(200, function($rows) use ($handle) {
-                foreach ($rows as $r) {
-                    fputcsv($handle, [$r->nombre, $r->lenguaje, $r->version, $r->descripcion]);
-                }
-            });
-            fclose($handle);
+{
+    $filename = 'librerias_' . date('Ymd_His') . '.csv';
+
+    $callback = function () {
+        $out = fopen('php://output', 'w');
+
+        // BOM para que Excel reconozca UTF-8 en Windows
+        fwrite($out, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+        // cabecera
+        fputcsv($out, ['nombre','lenguaje','version','descripcion']);
+
+        Libreria::orderBy('nombre')->chunk(200, function($rows) use ($out) {
+            foreach ($rows as $r) {
+                fputcsv($out, [
+                    $r->nombre,
+                    $r->lenguaje,
+                    $r->version,
+                    $r->descripcion,
+                ]);
+            }
         });
 
-        $response->headers->set('Content-Type','text/csv; charset=UTF-8');
-        $response->headers->set('Content-Disposition','attachment; filename="librerias_export.csv"');
+        fclose($out);
+    };
 
-        return $response;
-    }
+    return response()->streamDownload($callback, $filename, [
+        'Content-Type' => 'text/csv; charset=UTF-8',
+        'Pragma' => 'no-cache',
+        'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+    ]);
+}
+
 
     // Import CSV sencillo (columna: nombre,lenguaje,version,descripcion)
     public function importCsv(Request $request)

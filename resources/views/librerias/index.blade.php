@@ -38,20 +38,19 @@
   <nav class="top-menu navbar navbar-expand-lg">
     <div class="container-fluid">
       <a class="navbar-brand d-flex align-items-center text-white" href="#">
-        <img src="{{ asset('logo.png') }}" class="logo-img me-2" alt="Logo">
-        <strong>SAC</strong>
+        <img src="{{ asset('img/roboticaCir.png') }}" alt="Logo" style="height:80px; margin-right:8px;">
       </a>
     
       <ul class="navbar-nav me-auto mb-2 mb-lg-0 menu-options">
                     <!-- Menu de opciones -->
-                    <li class="nav-item"><a class="nav-link" href="#">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/inicio">Inicio</a></li>
                     <li class="nav-item"><a class="nav-link" href="/usuarios">Usuarios</a></li>
                     <li class="nav-item"><a class="nav-link" href="/proyectos">Proyectos</a></li>
                     <li class="nav-item"><a class="nav-link" href="/librerias">Librerias</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Microcontroladores</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Calibracion</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/microcontroladores">Microcontroladores</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/calibracion">Calibracion</a></li>
                     <li class="nav-item"><a class="nav-link" href="/codigos">Codigos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Historial</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/historial">Historial</a></li>
                 </ul>
 
       <div class="d-flex ms-auto align-items-center text-white">
@@ -82,7 +81,14 @@
 
       <a class="btn btn-outline-success" href="{{ route('librerias.export') }}">Exportar CSV</a>
 
-      <input id="buscar" class="form-control form-control-sm search" placeholder="Buscar librería / lenguaje" style="margin-left:8px;">
+      <form class="d-inline" method="GET" action="{{ route('librerias.index') }}">
+  <div class="input-group search" style="max-width:420px; margin-left:8px;">
+    <input id="buscar" name="q" value="{{ request('q') }}" class="form-control form-control-sm" placeholder="Buscar librería / lenguaje">
+    <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+    <button type="button" id="btnClearSearch" class="btn btn-outline-secondary" title="Limpiar" style="display:none;">✖</button>
+  </div>
+</form>
+
     </div>
 
     @if(session('success'))
@@ -228,6 +234,65 @@
     document.getElementById('btnSubmit').innerText = 'Guardar';
   });
 </script>
+
+<script>
+/* Búsqueda cliente: filtra tarjetas por nombre y lenguaje (case-insensitive) */
+(function () {
+  const input = document.getElementById('buscar');
+  if (!input) return;
+
+  const grid = document.getElementById('grid');
+  const cards = () => Array.from(grid.querySelectorAll('.card-lib'));
+
+  // debounce simple
+  function debounce(fn, wait = 200) {
+    let t;
+    return (...args) => {
+      clearTimeout(t);
+      t = setTimeout(() => fn(...args), wait);
+    };
+  }
+
+  function matchCard(card, q) {
+    q = q.trim().toLowerCase();
+    if (!q) return true;
+    // nombre visible
+    const lbl = card.querySelector('.lbl')?.textContent?.toLowerCase() || '';
+    const lang = card.querySelector('.badge-lang')?.textContent?.toLowerCase() || '';
+    const title = (card.getAttribute('title') || '').toLowerCase();
+    return lbl.includes(q) || lang.includes(q) || title.includes(q);
+  }
+
+  const onInput = debounce(function () {
+    const q = input.value;
+    cards().forEach(card => {
+      card.style.display = matchCard(card, q) ? '' : 'none';
+    });
+  }, 180);
+
+  input.addEventListener('input', onInput);
+
+  // si vienes con ?q=... desde servidor, aplicar filtro inicial
+  @if(request('q'))
+    input.value = {!! json_encode(request('q')) !!};
+    input.dispatchEvent(new Event('input'));
+  @endif
+
+})();
+</script>
+
+<script>
+(function(){
+  const input = document.getElementById('buscar');
+  const btn = document.getElementById('btnClearSearch');
+  if (!input || !btn) return;
+  function check() { btn.style.display = input.value ? '' : 'none'; }
+  input.addEventListener('input', check);
+  btn.addEventListener('click', () => { input.value = ''; check(); input.form.submit(); });
+  check();
+})();
+</script>
+
 
 </body>
 </html>

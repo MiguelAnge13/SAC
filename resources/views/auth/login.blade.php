@@ -11,7 +11,7 @@
     <style>
         body { background: #f4f6f9; }
         .card-login { max-width: 420px; margin: 6rem auto; }
-        .logo-small { height: 50px; }
+        .logo-small { height: 250px; }
     </style>
 </head>
 <body>
@@ -19,8 +19,8 @@
         <div class="card card-login shadow-sm">
             <div class="card-body">
                 <div class="text-center mb-4">
-                    <img src="{{ asset('logo.png') }}" alt="Logo" class="logo-small mb-2">
-                    <h4 class="mb-0">SAC - Iniciar sesión</h4>
+                    <img src="{{ asset('img/roboticaCir.png') }}" alt="Logo" class="logo-small mb-2">
+                    <h4 class="mb-0">Iniciar sesión</h4>
                     <p class="text-muted small mb-0">Ingresa con tu correo y contraseña</p>
                 </div>
 

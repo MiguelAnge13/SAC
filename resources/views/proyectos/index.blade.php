@@ -31,8 +31,7 @@
   <nav class="top-menu navbar navbar-expand-lg">
     <div class="container-fluid">
       <a class="navbar-brand d-flex align-items-center" href="#">
-        <img src="{{ asset('logo.png') }}" alt="Logo" class="logo-img me-2">
-        <strong>SAC</strong>
+        <img src="{{ asset('img/roboticaCir.png') }}" alt="Logo" style="height:80px; margin-right:8px;">
       </a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuHorizontal" aria-controls="menuHorizontal" aria-expanded="false" aria-label="Mostrar menú">
@@ -46,10 +45,10 @@
                     <li class="nav-item"><a class="nav-link" href="/usuarios">Usuarios</a></li>
                     <li class="nav-item"><a class="nav-link" href="/proyectos">Proyectos</a></li>
                     <li class="nav-item"><a class="nav-link" href="/librerias">Librerias</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Microcontroladores</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Calibracion</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/microcontroladores">Microcontroladores</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/calibracion">Calibracion</a></li>
                     <li class="nav-item"><a class="nav-link" href="/codigos">Codigos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Historial</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/historial">Historial</a></li>
                 </ul>
 
         <div class="d-flex align-items-center">

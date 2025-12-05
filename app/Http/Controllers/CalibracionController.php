@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use App\Models\Calibracion;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Services\EventLogger;
 
 class CalibracionController extends Controller
 {
@@ -65,6 +66,7 @@ class CalibracionController extends Controller
             'angulo' => $angulo,
             'nota' => $request->input('nota'),
         ]);
+        EventLogger::log('calibracion.create', 'calibracion', $cal->id, 'Se registró calibración', ['angles' => $data['angles'] ?? null]);
 
         return response()->json([
             'success' => true,

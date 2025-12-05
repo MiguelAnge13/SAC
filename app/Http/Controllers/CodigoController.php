@@ -7,6 +7,7 @@ use App\Models\Codigo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Services\EventLogger;
 
 class CodigoController extends Controller
 {
@@ -24,69 +25,95 @@ class CodigoController extends Controller
 
     // Guardar nuevo código
     public function store(Request $request)
-    {
-        // Solo administradores pueden crear? según tu petición antes: "solo admin puede eliminar", pero no restrict creado.
-        // Aquí dejamos que cualquier usuario autenticado pueda crear. Si quieres que solo admin cree, descomenta la verificación.
-        /*
-        if (!Auth::user()->esAdministrador()) {
-            return back()->with('error', 'No tienes permiso para crear códigos.');
-        }
-        */
+{
+    $data = $request->validate([
+        'titulo'   => 'nullable|string|max:255',
+        'lenguaje' => 'nullable|string|max:100',
+        'fecha'    => 'nullable|date',
+        'codigo'   => 'nullable|string',
+    ]);
 
-        $data = $request->validate([
-            'titulo' => 'nullable|string|max:255',
-            'lenguaje' => 'nullable|string|max:100',
-            'fecha' => 'nullable|date',
-            'codigo' => 'nullable|string',
-        ]);
+    $data['user_id'] = Auth::id();
 
-        $data['user_id'] = Auth::id();
+    // crear el registro en BD
+    $codigo = Codigo::create($data);
 
-        Codigo::create($data);
+    // registrar evento en historial
+    EventLogger::log(
+        'code.create',          // acción
+        'codigo',               // entidad
+        $codigo->id,            // entity_id
+        'Se creó código',       // descripción legible
+        [
+            'titulo' => $codigo->titulo,
+            'lenguaje' => $codigo->lenguaje
+        ]
+    );
 
-        return redirect()->route('codigos.index')->with('success', 'Código guardado correctamente.');
-    }
+    return redirect()->route('codigos.index')->with('success', 'Código guardado correctamente.');
+}
+
 
     // Devolver JSON del código (para cargar en formulario con JS)
     public function show($id)
-    {
-        $codigo = Codigo::findOrFail($id);
-        return response()->json($codigo);
-    }
+{
+    $codigo = Codigo::findOrFail($id);
+    // (opcional) no es habitual loggear solo una vista, pero puedes:
+    // EventLogger::log('code.view', 'codigo', $codigo->id, 'Se visualizó código');
+
+    return response()->json($codigo);
+}
+
 
     // Actualizar código existente
     public function update(Request $request, $id)
-    {
-        $codigo = Codigo::findOrFail($id);
+{
+    $codigo = Codigo::findOrFail($id);
 
-        // Opcional: verificar permisos (si sólo admin puede editar, añade la comprobación)
-        // if (!Auth::user()->esAdministrador()) { ... }
+    $old = $codigo->getOriginal(); // para meta -> old values
 
-        $data = $request->validate([
-            'titulo' => 'nullable|string|max:255',
-            'lenguaje' => 'nullable|string|max:100',
-            'fecha' => 'nullable|date',
-            'codigo' => 'nullable|string',
-        ]);
+    $data = $request->validate([
+        'titulo'   => 'nullable|string|max:255',
+        'lenguaje' => 'nullable|string|max:100',
+        'fecha'    => 'nullable|date',
+        'codigo'   => 'nullable|string',
+    ]);
 
-        $codigo->update($data);
+    $codigo->update($data);
 
-        return redirect()->route('codigos.index')->with('success', 'Código actualizado correctamente.');
-    }
+    EventLogger::log(
+        'code.update',
+        'codigo',
+        $codigo->id,
+        'Código actualizado',
+        [
+            'old' => $old,
+            'new' => $codigo->toArray()
+        ]
+    );
+
+    return redirect()->route('codigos.index')->with('success', 'Código actualizado correctamente.');
+}
+
 
     // Eliminar código (solo admin)
     public function destroy($id)
-    {
-        $usuario = Auth::user();
+{
+    $codigo = Codigo::findOrFail($id);
 
-        $usuarioActual = Auth::user();
-        if (! ($usuarioActual instanceof User) || ! $usuarioActual->esAdministrador()) {
-            return back()->with('error', 'Solo administradores pueden eliminar códigos.');
-        }
+    $snapshot = $codigo->toArray();
 
-        $codigo = Codigo::findOrFail($id);
-        $codigo->delete();
+    $codigo->delete();
 
-        return redirect()->route('codigos.index')->with('success', 'Código eliminado correctamente.');
-    }
+    EventLogger::log(
+        'code.delete',
+        'codigo',
+        $id,
+        'Código eliminado',
+        ['data' => $snapshot]
+    );
+
+    return redirect()->route('codigos.index')->with('success', 'Código eliminado.');
+}
+
 }

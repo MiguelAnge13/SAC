@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\EventLogger;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -15,38 +17,36 @@ class AuthController extends Controller
 
     // Procesar login
     public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'correo' => ['required','email'],
-            'password' => ['required','string'],
-        ], [
-            'correo.required' => 'El correo es obligatorio.',
-            'correo.email' => 'El correo debe ser una dirección válida.',
-            'password.required' => 'La contraseña es obligatoria.',
+{
+    $credentials = $request->validate([
+        'correo' => 'required|email',
+        'password' => 'required'
+    ]);
+
+    if (Auth::attempt(['correo' => $credentials['correo'], 'password' => $credentials['password']], $request->filled('remember'))) {
+        $request->session()->regenerate();
+
+        EventLogger::log('login', 'usuario', Auth::id(), 'Inicio de sesión', [
+            'correo' => Auth::user()->correo
         ]);
 
-        // Intentar autenticar usando 'correo' en vez de 'email'
-        if (Auth::attempt(['correo' => $credentials['correo'], 'password' => $credentials['password']], $request->filled('remember'))) {
-            // Regenera sesión
-            $request->session()->regenerate();
-
-            // Redirigir al intended o a lista de usuarios
-            return redirect()->intended(route('inicio'));
-        }
-
-        return back()->withErrors([
-            'correo' => 'Las credenciales no coinciden con nuestros registros.',
-        ])->onlyInput('correo');
+        return redirect()->intended(route('inicio'));
     }
+
+    return back()->withErrors(['correo' => 'Credenciales inválidas.'])->withInput();
+}
 
     // Cerrar sesión
     public function logout(Request $request)
-    {
-        Auth::logout();
+{
+    $userId = Auth::id();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
 
-        return redirect()->route('login');
-    }
+    EventLogger::log('logout', 'usuario', $userId, 'Cierre de sesión');
+
+    return redirect()->route('login');
+}
 }

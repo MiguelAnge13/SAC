@@ -48,16 +48,18 @@ use App\Http\Controllers\LibreriaController;
 Route::middleware('auth')->group(function () {
     Route::get('/librerias', [LibreriaController::class, 'index'])->name('librerias.index');
     Route::post('/librerias', [LibreriaController::class, 'store'])->name('librerias.store');
+
+    // <-- rutas estáticas / especiales primero
+    Route::post('/librerias/import', [LibreriaController::class, 'importCsv'])->name('librerias.import');
+    Route::get('/librerias/export', [LibreriaController::class, 'exportCsv'])->name('librerias.export');
+    Route::get('/api/librerias', [LibreriaController::class, 'apiList'])->name('librerias.api');
+
+    // ruta con parámetro al final (así no "secuestra" export)
     Route::get('/librerias/{id}', [LibreriaController::class, 'show'])->name('librerias.show');
     Route::put('/librerias/{id}', [LibreriaController::class, 'update'])->name('librerias.update');
     Route::delete('/librerias/{id}', [LibreriaController::class, 'destroy'])->name('librerias.destroy');
-
-    Route::post('/librerias/import', [LibreriaController::class, 'importCsv'])->name('librerias.import');
-    Route::get('/librerias/export', [LibreriaController::class, 'exportCsv'])->name('librerias.export');
-
-    // endpoint JSON para usar en otros módulos
-    Route::get('/api/librerias', [LibreriaController::class, 'apiList'])->name('librerias.api');
 });
+
 
 use App\Http\Controllers\InicioController;
 
@@ -88,4 +90,16 @@ Route::middleware('auth')->group(function(){
     Route::get('/calibracion', [CalibracionController::class,'index'])->name('calibracion.index');
     Route::post('/calibracion/cantidad', [CalibracionController::class,'setCantidad'])->name('calibracion.setCantidad');
     Route::post('/calibracion', [CalibracionController::class,'store'])->name('calibracion.store');
+});
+
+use App\Http\Controllers\MicrocontroladorController;
+
+Route::middleware('auth')->group(function () {
+    Route::get('/microcontroladores', [MicrocontroladorController::class, 'index'])->name('microcontroladores.index');
+    // simulación (solo para pruebas, visible en UI)
+    Route::post('/microcontroladores/simular', [MicrocontroladorController::class, 'simulateConnect'])->name('microcontroladores.simular');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/historial', [\App\Http\Controllers\HistorialController::class, 'index'])->name('historial.index');
 });

@@ -71,7 +71,7 @@
                     <li class="nav-item"><a class="nav-link" href="/proyectos">Proyectos</a></li>
                     <li class="nav-item"><a class="nav-link" href="/librerias">Librerias</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Microcontroladores</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Calibracion</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/calibracion">Calibracion</a></li>
                     <li class="nav-item"><a class="nav-link" href="/codigos">Codigos</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Historial</a></li>
                 </ul>

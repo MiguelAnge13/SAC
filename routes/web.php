@@ -81,3 +81,11 @@ Route::get('/forgot-password/enviado', function() {
 Route::get('/password/reset/form', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
 // Procesar reset
 Route::post('/password/reset', [PasswordResetController::class, 'reset'])->name('password.update');
+
+use App\Http\Controllers\CalibracionController;
+
+Route::middleware('auth')->group(function(){
+    Route::get('/calibracion', [CalibracionController::class,'index'])->name('calibracion.index');
+    Route::post('/calibracion/cantidad', [CalibracionController::class,'setCantidad'])->name('calibracion.setCantidad');
+    Route::post('/calibracion', [CalibracionController::class,'store'])->name('calibracion.store');
+});
